@@ -5,5 +5,7 @@ const IndexPage = () => {
 
   return (
     <div>Web site is under construction</div>
-  )
-}
+  );
+};
+
+export default IndexPage;
