@@ -1,7 +1,7 @@
 module.exports = {
   siteMetadata: {
-    siteUrl: "https://www.yourdomain.tld",
-    title: "free-youtube-analyzer",
+    siteUrl: "https://free-youtube-analyzer.com",
+    title: "Your free youtube analyzer",
   },
   plugins: [
     "gatsby-plugin-sass",
