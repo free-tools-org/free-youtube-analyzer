@@ -11,7 +11,7 @@ export const youtubeListApi = async (youtubeApiFunction, props) => {
       });
       pageToken = response.result.nextPageToken;
       hasNextPage = !!pageToken;
-      results = [...results, response.result];
+      results = [...results, ...response.result.items];
     } catch (e) {
       throw e;
     }

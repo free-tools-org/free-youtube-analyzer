@@ -1,5 +1,12 @@
-import { YOUTUBE_GET_PLAYLISTS, YOUTUBE_GET_PLAYLIST_ITEMS, YOUTUBE_GET_VIDEO_LIST } from './types';
+import { YOUTUBE_RESET_DATA, YOUTUBE_GET_PLAYLISTS, YOUTUBE_GET_PLAYLIST_ITEMS, YOUTUBE_GET_VIDEO_LIST } from './types';
 import { youtubeListApi } from '../lib/api';
+
+export const resetYoutubeStore = () => (dispatch) => {
+  dispatch({
+    type: YOUTUBE_RESET_DATA
+  });
+};
+
 
 export const getPlaylists = (options) => async (dispatch) => {
   /**
@@ -45,8 +52,8 @@ export const getVideoList = (option) => async (dispatch) => {
 
   if (window.gapi?.client) {
     try {
-      const playlistItems = await youtubeListApi(window.gapi.client.youtube.videos.list, option);
-      dispatch({ type: YOUTUBE_GET_PLAYLIST_ITEMS, payload: playlistItems });
+      const videosList = await youtubeListApi(window.gapi.client.youtube.videos.list, option);
+      dispatch({ type: YOUTUBE_GET_VIDEO_LIST, payload: videosList });
     } catch (e) {
       console.error(e.result.error.message);
       throw e;

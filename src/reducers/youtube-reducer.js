@@ -1,4 +1,4 @@
-import { YOUTUBE_GET_PLAYLISTS, YOUTUBE_GET_PLAYLIST_ITEMS, YOUTUBE_GET_VIDEO_LIST } from '../actions/types';
+import { YOUTUBE_RESET_DATA, YOUTUBE_GET_PLAYLISTS, YOUTUBE_GET_PLAYLIST_ITEMS, YOUTUBE_GET_VIDEO_LIST } from '../actions/types';
 
 const INITIAL_STATE = {
   playlists: [],
@@ -8,6 +8,8 @@ const INITIAL_STATE = {
 
 export const youtubeReducers = (state = INITIAL_STATE, action) => {
   switch (action.type) {
+    case YOUTUBE_RESET_DATA:
+      return INITIAL_STATE;
     case YOUTUBE_GET_PLAYLISTS:
       return { ...state, playlists: action.payload };
     case YOUTUBE_GET_PLAYLIST_ITEMS:
