@@ -1,63 +1,70 @@
 import {
-  PROGRESS_PLAYLIST_RESET,
-  PROGRESS_PLAYLIST_INCREMENT,
-  PROGRESS_PLAYLIST_ITEM_INCREMENT,
-  PROGRESS_VIDEO_INCREMENT
+  PROGRESS_RESET,
+  PROGRESS_CHANNELS_SET,
+  PROGRESS_CHANNELS_INCREMENT,
+  PROGRESS_VIDEOS_SET,
+  PROGRESS_VIDEO_INCREMENT,
 } from '../actions/types';
 
 const INITIAL_STATE = {
-  playlist: {
+  channels: {
     current: 0,
-    total: 100
-  },
-  playlistItems: {
-    current: 0,
-    total: 100,
+    total: 0,
   },
   videos: {
     current: 0,
-    total: 100
+    total: 0,
   }
 };
 
 export const progressReducer = (state = INITIAL_STATE, action) => {
+  let newState = {};
   switch (action.type) {
-    case PROGRESS_PLAYLIST_RESET:
-      return {
-        playlist: {
-          current: 0,
-          total: action.payload.playlistsTotal
-        },
-        playlistItems: {
-          current: 0,
-          total: action.payload.playlistItemsTotal
-        },
+
+    case PROGRESS_RESET:
+      return INITIAL_STATE;
+
+    case PROGRESS_CHANNELS_SET:
+      newState = {
+        ...state,
+        channels: {
+          current: action.payload.current || state.channels.current,
+          total: action.payload.total || state.channels.total
+        }
+      };
+      return newState;
+
+    case PROGRESS_CHANNELS_INCREMENT:
+      newState = {
+        ...state,
+        channels: {
+          total: state.channels.total + (action.payload.total || 0),
+          current: state.channels.current + (action.payload.value || 0),
+        }
+      };
+      return newState;
+
+    case PROGRESS_VIDEOS_SET:
+      console.log("PROGRESS_VIDEOS_SET", action.payload)
+      newState = {
+        ...state,
         videos: {
-          current: 0,
-          total: action.payload.videosTotal
+          current: action.payload.current || 0,
+          total: action.payload.total || 0
         }
       };
-    case PROGRESS_PLAYLIST_INCREMENT:
-      return {
-        ...state, playlist: {
-          current: action.payload.current,
-          total: action.payload.total
-        }
-      };
-    case PROGRESS_PLAYLIST_ITEM_INCREMENT:
-      return {
-        ...state, playlistItems: {
-          current: action.payload.current,
-          total: action.payload.total
-        }
-      };
+      return newState;
+
     case PROGRESS_VIDEO_INCREMENT:
-      return {
-        ...state, videos: {
-          current: action.payload.current,
-          total: action.payload.total
+      newState = {
+        ...state,
+        videos: {
+          total: state.videos.total + (action.payload.total || 0),
+          current: state.videos.current + (action.payload.value || 0),
         }
       };
+      return newState;
+
     default:
       return state;
   }
