@@ -1,7 +1,7 @@
 module.exports = {
   siteMetadata: {
     siteUrl: "https://free-youtube-analyzer.com",
-    title: "Your free youtube analyzer",
+    title: "Your free youtube analyzer"
   },
   plugins: [
     "gatsby-plugin-sass",
@@ -13,7 +13,14 @@ module.exports = {
       },
     },
     "gatsby-plugin-react-helmet",
-    "gatsby-plugin-sitemap",
+    {
+      resolve: "gatsby-plugin-sitemap",
+      options: {
+        excludes: [
+          "/youtube"
+        ]
+      }
+    },
     {
       resolve: "gatsby-plugin-manifest",
       options: {

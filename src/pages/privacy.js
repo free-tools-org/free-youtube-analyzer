@@ -1,8 +1,8 @@
 import * as React from 'react';
-
+import Layout from '../components/layouts/layout';
 const PrivacyPage = () => {
   return (
-    <>
+    <Layout>
       <h1>Privacy Policy for Free youtube analyzer</h1>
 
       <p>At Free youtube analyzer, accessible from https://free-youtube-analyzer.com, one of our main priorities is the privacy of our visitors. This Privacy Policy document contains types of information that is collected and recorded by Free youtube analyzer and how we use it.</p>
@@ -88,6 +88,8 @@ const PrivacyPage = () => {
       <p>Another part of our priority is adding protection for children while using the internet. We encourage parents and guardians to observe, participate in, and/or monitor and guide their online activity.</p>
 
       <p>Free youtube analyzer does not knowingly collect any Personal Identifiable Information from children under the age of 13. If you think that your child provided this kind of information on our website, we strongly encourage you to contact us immediately and we will do our best efforts to promptly remove such information from our records.</p>
-    </>
+    </Layout>
   );
 };
+
+export default PrivacyPage;
