@@ -117,15 +117,9 @@ const YoutubeLandingPage = (props) => {
 
   React.useEffect(() => {
     if (batchCounter.playlist.finished) {
-      // get all videos data from playlistItems
-      // console.log('playlistItems count', playlistItems.length);
-      // console.log('playlistItems set', Array.from(new Set(playlistItems)).length);
       const uniqueVideoIds = Array.from(new Set(playlistItems));
       const videoIdChunks = splitChunk(uniqueVideoIds, 10);
       resetVideoBatch(videoIdChunks.length);
-      // resetVideoProgress(uniqueVideoIds.length);
-      // console.log(uniqueVideoIds);
-      // console.log('finish');
       videoIdChunks.forEach(videoIdChunk => {
         getYoutubeVideos({
           part: [
@@ -142,13 +136,22 @@ const YoutubeLandingPage = (props) => {
 
   React.useEffect(() => {
     if (batchCounter.videos.finished) {
-      console.log('finished');
+      // console.log('finished');
 
       const allVideos = videos.map(v => {
         v.contentDetails.durationSecs = toSeconds(parseDuration(v.contentDetails.duration));
+        v.snippet.publishedYM = v.snippet.publishedAt.split("T")[0].split("-").slice(0, -1).join("-");
         return v;
       });
       const allActiveVideos = allVideos.filter((v) => v.status.uploadStatus === 'processed');
+
+
+      // separate videos by publishedYM
+
+      // separate videos by durationSecs
+
+      // separate videos by publishedYM + durationSecs
+
 
 
       // console.log(videos.map(v => ({ duration: v.contentDetails.duration, durationSecs: toSeconds(parseDuration(v.contentDetails.duration)) })));
