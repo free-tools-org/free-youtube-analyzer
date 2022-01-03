@@ -1,5 +1,6 @@
 import {
   STATUS_RESET,
+  STATUS_IS_WORKING,
   STATUS_UPDATE_READY_TO_START,
   STATUS_CHANNEL_LOADED,
   STATUS_PLAYLIST_LOADED,
@@ -8,6 +9,7 @@ import {
 
 const INITIAL_STATE = {
   isReadyToWork: false,
+  isWorking: false,
   isChannelLoaded: false,
   isPlaylistLoaded: false,
   isPlaylistItemLoaded: false,
@@ -21,6 +23,13 @@ export const statusReducer = (state = INITIAL_STATE, action) => {
       newState = {
         ...INITIAL_STATE,
         isReadyToWork: state.isReadyToWork // preserved for login button to manipulate
+      };
+      return newState;
+
+    case STATUS_IS_WORKING:
+      newState = {
+        ...state,
+        isWorking: action.payload
       };
       return newState;
 
@@ -49,7 +58,7 @@ export const statusReducer = (state = INITIAL_STATE, action) => {
       newState = {
         ...state,
         isPlaylistItemLoaded: action.payload
-      }
+      };
       return newState;
 
     default:

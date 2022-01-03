@@ -1,7 +1,7 @@
 import * as React from "react";
 import { connect } from 'react-redux';
-import { parse as parseDuration, toSeconds } from 'iso8601-duration';
-
+// import { parse as parseDuration, toSeconds } from 'iso8601-duration';
+import { navigate } from 'gatsby';
 import { GoogleLogin, GoogleLogout } from 'react-google-login';
 import { googleLoginResponse, googleLoadRestApi } from '../../actions/google-oauth2';
 
@@ -10,6 +10,7 @@ import Layout from '../../components/layouts/layout';
 
 import {
   statusReset,
+  statusUpdateIsWorking,
   statusUpdateReadyToWork
 } from '../../actions/youtube-status';
 import {
@@ -26,8 +27,9 @@ import { resetAllProgress, resetVideoProgress } from '../../actions/progress-cou
 
 import ProgressBar from '../../components/progress-bar';
 
-// const CHANNEL_ID = "UCtFf0Mb7MaluoPuyYonfaPQ"; // ลงทุนแมน
-const CHANNEL_ID = "UCGO2v4qXvUMzYQBwmi69t6Q"; // Space Stratagem with Shaling
+const CHANNEL_ID = "UCtFf0Mb7MaluoPuyYonfaPQ"; // ลงทุนแมน
+// const CHANNEL_ID = "UCGO2v4qXvUMzYQBwmi69t6Q"; // Space Stratagem with Shaling
+// const CHANNEL_ID = "UC-ILIvzKEsf6u_ZUFrnoRMg"; // คุณครูพอใจ
 
 const YoutubeLandingPage = (props) => {
   const {
@@ -40,6 +42,7 @@ const YoutubeLandingPage = (props) => {
     resetStatus,
     youtubeStatus,
     setReadyToWork,
+    setIsWorking,
 
     // progress
     progress,
@@ -71,6 +74,7 @@ const YoutubeLandingPage = (props) => {
 
     if (GoogleAuth && !GoogleAuth.error && GoogleClientLoaded) {
       setReadyToWork(true);
+      setIsWorking(false);
     }
 
     return () => {
@@ -79,7 +83,7 @@ const YoutubeLandingPage = (props) => {
   }, [GoogleAuth, GoogleClientLoaded]);
 
   React.useEffect(() => {
-    if (youtubeStatus.isChannelLoaded) {
+    if (youtubeStatus.isChannelLoaded && youtubeStatus.isWorking) {
       resetVideoProgress(channels.reduce((t, v) => {
         return t + parseInt(v.statistics.videoCount, 10);
       }, 0));
@@ -99,7 +103,7 @@ const YoutubeLandingPage = (props) => {
   }, [youtubeStatus.isChannelLoaded]);
 
   React.useEffect(() => {
-    if (youtubeStatus.isPlaylistLoaded) {
+    if (youtubeStatus.isPlaylistLoaded && youtubeStatus.isWorking) {
       // grap playlist items for each playlist
       // console.log('playlistIds size', playlistIds.length);
       resetPlaylistBatch(playlistIds.length);
@@ -116,7 +120,7 @@ const YoutubeLandingPage = (props) => {
   }, [youtubeStatus.isPlaylistLoaded]);
 
   React.useEffect(() => {
-    if (batchCounter.playlist.finished) {
+    if (batchCounter.playlist.finished && youtubeStatus.isWorking) {
       const uniqueVideoIds = Array.from(new Set(playlistItems));
       const videoIdChunks = splitChunk(uniqueVideoIds, 10);
       resetVideoBatch(videoIdChunks.length);
@@ -135,28 +139,12 @@ const YoutubeLandingPage = (props) => {
   }, [batchCounter.playlist.finished]);
 
   React.useEffect(() => {
-    if (batchCounter.videos.finished) {
+    if (batchCounter.videos.finished && youtubeStatus.isWorking) {
       console.log('finished');
-
-      // const allVideos = videos.map(v => {
-      //   v.contentDetails.durationSecs = toSeconds(parseDuration(v.contentDetails.duration));
-      //   v.snippet.publishedYM = v.snippet.publishedAt.split("T")[0].split("-").slice(0, -1).join("-");
-      //   return v;
-      // });
-      // const allActiveVideos = allVideos.filter((v) => v.status.uploadStatus === 'processed');
-
-
-      // separate videos by publishedYM
-
-      // separate videos by durationSecs
-
-      // separate videos by publishedYM + durationSecs
-
-
-
-      // console.log(videos.map(v => ({ duration: v.contentDetails.duration, durationSecs: toSeconds(parseDuration(v.contentDetails.duration)) })));
-      // window['allVideos'] = allActiveVideos;
-
+      setIsWorking(false);
+      navigate('/analyze/reports', {
+        replace: true
+      });
     }
   }, [batchCounter.videos.finished]);
 
@@ -165,6 +153,7 @@ const YoutubeLandingPage = (props) => {
       resetStatus();
       resetProgress();
       resetYoutubeData();
+      setIsWorking(true);
       getYoutubeChannelData({
         id: CHANNEL_ID,
         part: [
@@ -206,17 +195,17 @@ const YoutubeLandingPage = (props) => {
       )}
       {
         youtubeStatus.isReadyToWork ? (
-          <button className="btn btn-primary" onClick={() => { start(); }}>Start</button>
+          <button className={`btn btn-primary ${youtubeStatus.isWorking && "btn-disabled"}`} onClick={() => { start(); }} disabled={youtubeStatus.isWorking}>Start</button>
         ) : (
           <button className="btn btn-diusabled" disabled={true}>Login first</button>
         )
       }
       {
-        youtubeStatus.isReadyToWork && (
+        youtubeStatus.isWorking && (
           <div className="container">
             <div className="row">
               <div className="col">
-                {/* <ProgressBar title="Loading page activities" current={progress.activities.current} max={progress.activities.total} color="bg-info" /> */}
+                <ProgressBar title="Loading video data" current={progress.videos.current} max={progress.videos.total} color="bg-info" />
               </div>
             </div>
           </div>
@@ -253,6 +242,7 @@ const mapDispatchToProps = dispatch => ({
   // status actions
   resetStatus: () => dispatch(statusReset()),
   setReadyToWork: (b) => dispatch(statusUpdateReadyToWork(b)),
+  setIsWorking: (b) => dispatch(statusUpdateIsWorking(b)),
 
   // progress bar actions
   resetProgress: () => dispatch(resetAllProgress()),

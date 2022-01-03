@@ -1,5 +1,6 @@
 import {
   STATUS_RESET,
+  STATUS_IS_WORKING,
   STATUS_UPDATE_READY_TO_START,
   STATUS_PLAYLIST_LOADED,
   STATUS_PLAYLIST_ITEMS_LOADED
@@ -15,6 +16,13 @@ export const statusReset = () => (dispatch) => {
 export const statusUpdateReadyToWork = (status) => (dispatch) => {
   dispatch({
     type: STATUS_UPDATE_READY_TO_START,
+    payload: status
+  });
+};
+
+export const statusUpdateIsWorking = (status) => (dispatch) => {
+  dispatch({
+    type: STATUS_IS_WORKING,
     payload: status
   });
 };
